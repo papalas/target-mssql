@@ -6,6 +6,7 @@ import sqlalchemy
 from singer_sdk.connectors.sql import SQLConnector
 from singer_sdk.helpers._typing import get_datelike_property_type
 from sqlalchemy.dialects import mssql
+from sqlalchemy.engine.base import Engine
 
 
 class mssqlConnector(SQLConnector):
@@ -52,6 +53,10 @@ class mssqlConnector(SQLConnector):
         self.bulk_insert_records(
             full_table_name=full_table_name, schema=schema, records=records
         )
+
+    def create_sqlalchemy_engine(self) -> Engine:
+        engine =  sqlalchemy.create_engine(self.sqlalchemy_url,fast_executemany=True) # type: ignore
+        return engine
 
     def get_sqlalchemy_url(self, config: dict) -> str:
         """Generates a SQLAlchemy URL for mssql.
